@@ -3,7 +3,7 @@
 
 using namespace std;
 
-int lengthOfLongestSubstring(string s);
+int lengthOfLongestSubstring(const string &s);
 
 int main() {
     string str;
@@ -12,7 +12,7 @@ int main() {
     return 0;
 }
 
-int lengthOfLongestSubstring(string s) {
+int lengthOfLongestSubstring(const string &s) {
     if(s.empty())
         return 0;
 
