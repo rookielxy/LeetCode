@@ -1,41 +1,44 @@
 #include <iostream>
-#include <vector>
 #include <sstream>
-#include <cstring>
+#include <vector>
 #include <string>
-#include <queue>
 
 using namespace std;
 
-int jump(vector<int> &nums);
+bool canJump(vector<int>& nums);
 
 int main() {
-    string str;
-    stringstream ss;
-    vector<int> nums;
-    int data;
+	stringstream ss;
+	string str;
+	getline(cin, str);
+	ss << str;
 
-    getline(cin, str);
-    ss << str;
-    while(ss >> data)
-        nums.push_back(data);
-    cout << jump(nums) << endl;
-    return 0;
+	int data;
+	vector<int> nums;
+	while (ss >> data)
+		nums.emplace_back(data);
+	if (canJump(nums))
+		cout << "True" << endl;
+	else
+		cout << "False" << endl;
+	return 0;
 }
 
-int jump(vector<int> &nums) {
-    int jump = 0, idx = 0, maxEnd = 0;
-    while(maxEnd < nums.size() - 1) {
-        int newEnd = min(idx + nums[idx], (int)nums.size() - 1);
-        int max = maxEnd, flag = 0;
-        for(int w = maxEnd + 1; w <= newEnd; ++w) {
-            flag = (nums[w] + w > max)? w: flag;
-            max = (nums[w] + w > max)? nums[w] + w: max;
-        }
-        idx = flag;
-        ++jump;
-        maxEnd = newEnd;
-    }
-    return jump;
-}
+bool canJump(vector<int>& nums) {
+	if (nums.empty() or nums.size() == 1)
+		return true;
+	if (nums[0] == 0)
+		return false;
+	bool zero = false;
+	for (int ele : nums)
+		zero = zero || (ele == 0);
+	if (not zero)
+		return true;
 
+	int leftmost = (unsigned)nums.size() - 1;
+	for (int i = (unsigned)nums.size() - 2; i >= 0; --i) {
+		if (nums[i] + i >= leftmost)
+			leftmost = i;
+	}
+	return leftmost == 0;
+}
