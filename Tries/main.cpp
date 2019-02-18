@@ -11,7 +11,7 @@ class Trie {
 		/* assume that all inputs are consists of lowercase letters */
 		explicit Node() {
 			end = false;
-			for (Node *ptr : map)
+			for (Node *&ptr : map)
 				ptr = nullptr;
 		}
 	};
@@ -20,7 +20,7 @@ public:
 
 	/** Initialize your data structure here. */
 	explicit Trie() {
-		for (Node *root : forest)
+		for (Node *&root : forest)
 			root = nullptr;
 	}
 
