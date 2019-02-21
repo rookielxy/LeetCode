@@ -42,6 +42,7 @@ public:
 };
 
 int main() {
+	string str;
 	TimeMap kv;
 	kv.set("foo", "bar", 1);
 	assert(kv.get("foo", 1) == "bar");
