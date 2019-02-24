@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <set>
+#include <map>
 
 using namespace std;
 
@@ -30,17 +31,13 @@ int main() {
 	return 0;
 }
 
-vector<set<int>> h;
-vector<set<int>> v;
-vector<set<int>> d1;
-vector<set<int>> d2;
+map<int, set<int>> h;
+map<int, set<int>> v;
+map<int, set<int>> d1;
+map<int, set<int>> d2;
 vector<int> gridIllumination(int N, vector<vector<int>>& lamps, vector<vector<int>>& queries) {
 	vector<int> answer(queries.size());
 
-	h.resize((unsigned)N);
-	v.resize((unsigned)N);
-	d1.resize((unsigned)2*N - 1);
-	d2.resize((unsigned)2*N - 1);
 	for (vector<int> &lamp : lamps) {
 		h[lamp[0]].insert(lamp[1]);
 		v[lamp[1]].insert(lamp[0]);
