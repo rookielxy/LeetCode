@@ -19,6 +19,7 @@ string smallestGoodBase(const string& n) {
 	unsigned long long x;
 	ss << n;
 	ss >> x;
+
 	int upper = (int)floor(log2(x));
 	for (int i = upper; i >= 1; --i) {
 		if (((unsigned long long)floor(pow(x, (double)1/(i+1)))) ==
