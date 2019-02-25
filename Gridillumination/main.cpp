@@ -6,7 +6,6 @@
 using namespace std;
 
 vector<int> gridIllumination(int N, vector<vector<int>>& lamps, vector<vector<int>>& queries);
-void erasePoint(int x, int y, int N);
 
 int main() {
 	int N, numLamp, numQuery;
@@ -15,14 +14,12 @@ int main() {
 	vector<vector<int>> lamps;
 	for (int i = 0; i < numLamp; ++i) {
 		cin >> x >> y;
-		vector<int> temp = { x, y };
-		lamps.emplace_back(temp);
+		lamps.push_back({x, y});
 	}
 	vector<vector<int>> queries;
 	for (int i = 0; i < numQuery; ++i) {
 		cin >> x >> y;
-		vector<int> temp = { x, y };
-		queries.emplace_back(temp);
+		queries.push_back({x, y});
 	}
 	vector<int> answer = gridIllumination(N, lamps, queries);
 	for (int ele : answer)
