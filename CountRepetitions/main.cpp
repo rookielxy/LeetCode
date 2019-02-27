@@ -38,32 +38,41 @@ int getMaxRepetitions(const string& s1, int n1, const string& s2, int n2) {
 			indexes.emplace(i);
 	}
 
-	map<int, pair<int, int>> hash;
+	map<int, vector<int>> hash;
 	for (int index : indexes) {
 		int rep = 0, p1 = index, p2 = 0;
 		while (p2 < s2.size()) {
 			if (s2[p2] == s1[p1])
 				++p2;
+			if (p2 == s2.size())
+				break;
 			++p1;
 			if (p1 == s1.size()) {
 				p1 = 0;
-				rep += (p2 == s2.size())? 0 : 1;
+				++rep;
 			}
 		}
-		int nextIdx = (indexes.lower_bound(p1) == indexes.end())?
-				*indexes.begin() : *indexes.lower_bound(p1);
-		hash[index] = make_pair(nextIdx, rep);
+		int flag, nextIdx;
+		if (indexes.upper_bound(p1) == indexes.end()) {
+			flag = 1;
+			nextIdx = *indexes.begin();
+		} else {
+			flag = 0;
+			nextIdx = *indexes.upper_bound(p1);
+		}
+		vector<int> temp = {rep, nextIdx, flag};
+		hash.emplace(index, temp);
 	}
 
 	int ans = 0, idx = *indexes.begin();
 	int interval = n1 - 1;
 	while (true) {
-		interval -= hash[idx].second;
-		if (hash[idx].first == *indexes.begin())
-			--interval;
-		if (interval < 0)
+		interval -= hash[idx][0];
+		if (interval < 0) {
 			break;
-		idx = hash[idx].first;
+		}
+		interval -= hash[idx][2];
+		idx = hash[idx][1];
 		++ans;
 	}
 	return ans/n2;
