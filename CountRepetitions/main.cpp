@@ -47,29 +47,23 @@ int getMaxRepetitions(const string& s1, int n1, const string& s2, int n2) {
 			++p1;
 			if (p1 == s1.size()) {
 				p1 = 0;
-				++rep;
+				rep += (p2 == s2.size())? 0 : 1;
 			}
 		}
-		int nextIdx;
-		if (indexes.lower_bound(p1) == indexes.end()) {
-			nextIdx = *indexes.begin();
-			++rep;
-		} else {
-			nextIdx = *indexes.lower_bound(p1);
-		}
+		int nextIdx = (indexes.lower_bound(p1) == indexes.end())?
+				*indexes.begin() : *indexes.lower_bound(p1);
 		hash[index] = make_pair(nextIdx, rep);
 	}
 
 	int ans = 0, idx = *indexes.begin();
+	int interval = n1 - 1;
 	while (true) {
-		n1 -= hash[idx].second;
+		interval -= hash[idx].second;
+		if (hash[idx].first == *indexes.begin())
+			--interval;
+		if (interval < 0)
+			break;
 		idx = hash[idx].first;
-		if (n1 == 0) {
-			ans += (idx == 0)? 1 : 0;
-			break;
-		}
-		if (n1 < 0)
-			break;
 		++ans;
 	}
 	return ans/n2;
