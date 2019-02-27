@@ -32,48 +32,33 @@ int getMaxRepetitions(const string& s1, int n1, const string& s2, int n2) {
 			return 0;
 	}
 
-	set<int> indexes;
-	for (int i = 0; i < s1.size(); ++i) {
-		if (s1[i] == s2[0])
-			indexes.emplace(i);
-	}
+	vector<int> index(s2.size() + 1);
+	vector<int> count(s2.size() + 1);
+	map<int, int> hash;
+	int idx = 0, cnt = 0;
 
-	map<int, vector<int>> hash;
-	for (int index : indexes) {
-		int rep = 0, p1 = index, p2 = 0;
-		while (p2 < s2.size()) {
-			if (s2[p2] == s1[p1])
-				++p2;
-			if (p2 == s2.size())
-				break;
-			++p1;
-			if (p1 == s1.size()) {
-				p1 = 0;
-				++rep;
+	index[0] = count[0] = 0;
+	hash.emplace(0, 0);
+	for (int i = 1; i <= min(n1, (int)s2.size()); ++i) {
+		for (char ch : s1) {
+			if (ch == s2[idx]) {
+				++idx;
+				if (idx == s2.size()) {
+					idx = 0;
+					++cnt;
+				}
 			}
 		}
-		int flag, nextIdx;
-		if (indexes.upper_bound(p1) == indexes.end()) {
-			flag = 1;
-			nextIdx = *indexes.begin();
-		} else {
-			flag = 0;
-			nextIdx = *indexes.upper_bound(p1);
+		index[i] = idx;
+		count[i] = cnt;
+		if (hash.find(idx) == hash.end())
+			hash.emplace(idx, i);
+		else {
+			int cnt1 = count[hash[idx]];
+			int pattern = (cnt - cnt1)*((n1 - hash[idx])/(i - hash[idx]));
+			int cnt2 = count[hash[idx] + (n1 - hash[idx])%(i - hash[idx])] - cnt1;
+			return (cnt1 + pattern + cnt2)/n2;
 		}
-		vector<int> temp = {rep, nextIdx, flag};
-		hash.emplace(index, temp);
 	}
-
-	int ans = 0, idx = *indexes.begin();
-	int interval = n1 - 1;
-	while (true) {
-		interval -= hash[idx][0];
-		if (interval < 0) {
-			break;
-		}
-		interval -= hash[idx][2];
-		idx = hash[idx][1];
-		++ans;
-	}
-	return ans/n2;
+	return count[n1]/n2;
 }
