@@ -2,11 +2,11 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include <deque>
 
 using namespace std;
 
 int longestOnes(vector<int>& A, int K);
-int dfs(vector<int> intervals, int K);
 
 int main() {
 	stringstream ss;
@@ -27,55 +27,28 @@ int main() {
 int longestOnes(vector<int>& A, int K) {
 	if (A.empty())
 		return 0;
-	vector<int> intervals;
-	int count = 0;
-	int data = 1;
-	for (int ele : A) {
-		if (ele == data) {
-			++count;
-		} else {
-			intervals.emplace_back(count);
-			count = 1;
-			data = ele;
-		}
-	}
-	if (count != 0) {
-		intervals.emplace_back(count);
-		if (A.back() == 0)
-			intervals.emplace_back(0);
-	}
-
-	return dfs(intervals, K);
-}
-
-int dfs(vector<int> intervals, int K) {
-	bool less = false;
-	for (int i = 0; 2*i + 1 < intervals.size(); ++i) {
-		if (intervals[2*i + 1] <= K)
-			less = true;
-	}
-	if (not less) {
-		int peak = 0;
-		for (int i = 0; 2*i < intervals.size(); ++i)
-			peak = max(peak, intervals[2*i]);
-		return peak + K;
-	}
-	int peak = 0;
-	for (int idx = 1; idx < intervals.size(); idx += 2) {
-		if (intervals[idx] == K) {
-			peak = max(peak, intervals[idx] + intervals[idx - 1] + intervals[idx + 1]);
-		} else if (intervals[idx] < K) {
-			vector<int> merge_interval(intervals.size() - 2);
-			for (int i = 0, j = 0; i < intervals.size(); ++i, ++j) {
-				if (i == idx - 1) {
-					merge_interval[j] = intervals[idx - 1] + intervals[idx] + intervals[idx + 1];
-					i += 2;
-				} else {
-					merge_interval[j] = intervals[i];
-				}
+	if (K == 0) {
+		int peak = 0, length = 0;
+		for (int ele : A) {
+			if (ele == 1) {
+				++length;
+				peak = max(peak, length);
+			} else {
+				length = 0;
 			}
-			peak = max(peak, dfs(merge_interval, K - intervals[idx]));
 		}
+		return peak;
 	}
-	return peak;
+	int start = 0, end = 0, length = 0;
+	while (end < A.size()) {
+		if (K == 0 and A[end] == 0) {
+			K += (A[start] == 0)? 1 : 0;
+			++start;
+		} else {
+			K -= (A[end] == 0)? 1 : 0;
+			++end;
+		}
+		length = max(length, end - start);
+	}
+	return length;
 }
