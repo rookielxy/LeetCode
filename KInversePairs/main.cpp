@@ -20,7 +20,7 @@ int kInversePairs(int n, int k) {
 		return 1;
 	if (k < 0 or k > n*(n - 1)/2)
 		return 0;
-	const int MOD = 1e9+7;
+	const int MOD = 1000000007;
 	vector<vector<int>> dp((size_t)n + 1, vector<int>((size_t)k + 1, 0));
 	dp[1][0] = 1;
 	for (int i = 2; i <= n; ++i) {
