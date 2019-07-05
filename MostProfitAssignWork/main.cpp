@@ -28,25 +28,20 @@ int main() {
 int maxProfitAssignment(vector<int>& difficulty, vector<int>& profit, vector<int>& worker) {
 	vector<pair<int, int>> jobs(difficulty.size());
 	for (int i = 0; i < (int)jobs.size(); ++i) {
-		jobs[i].first = difficulty[i];
-		jobs[i].second = profit[i];
+		jobs[i].first = profit[i];
+		jobs[i].second = difficulty[i];
 	}
-	sort(jobs.begin(), jobs.end());
+	sort(jobs.begin(), jobs.end(),
+			[](pair<int, int> p1, pair<int, int> p2) -> bool { return p1.first > p2.first; });
+	sort(worker.begin(), worker.end(),
+			[](int i1, int i2) -> bool { return i1 > i2; });
 
-	map<int, int> diff2prof;
-	int maxProfit = 0;
-	for (auto p : jobs) {
-		maxProfit = max(maxProfit, p.second);
-		diff2prof[p.first] = maxProfit;
-	}
-
-	int sumProfit = 0;
+	int sumProfit = 0, idx = 0;
 	for (auto ele : worker) {
-		auto it = diff2prof.upper_bound(ele);
-		if (it == diff2prof.begin())
-			continue;
-		--it;
-		sumProfit += it->second;
+		while (idx < jobs.size() and jobs[idx].second > ele)
+			++idx;
+		if (idx < jobs.size())
+			sumProfit += jobs[idx].first;
 	}
 	return sumProfit;
 }
