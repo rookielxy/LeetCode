@@ -28,21 +28,29 @@ int main() {
 
 vector<int> kthSmallestPrimeFraction(vector<int>& A, int K) {
 	sort(A.begin(), A.end());
-	struct compare {
-		bool operator() (pair<int, int> p1, pair<int, int> p2) {
-			return p1.first*p2.second < p2.first*p1.second;
+	struct Compare {
+		const vector<int>& matrix;
+
+		explicit Compare(const vector<int>& A): matrix(A) {}
+
+		bool operator() (const pair<int, int>& p1, const pair<int, int>& p2) {
+			return matrix[p1.first]*matrix[p2.second] > matrix[p2.first]*matrix[p1.second];
 		}
 	};
-	priority_queue<pair<int, int>, vector<pair<int, int>>, compare> heap;
+	Compare compare(A);
+	priority_queue<pair<int, int>, vector<pair<int, int>>, Compare> heap(compare);
 
-	for (int i = 0; i < (int)A.size(); ++i) {
-		int numerator = A[i];
-		for (int j = i + 1; j < (int)A.size(); ++j) {
-			int denominator = A[j];
-			heap.push(make_pair(numerator, denominator));
-			if (heap.size() > K)
-				heap.pop();
-		}
+	for (int i = 0; i < (int)A.size(); ++i)
+		heap.emplace(make_pair(0, i));
+
+	pair<int, int> result;
+	for (int i = 0; i < K; ++i) {
+		result = heap.top();
+		heap.pop();
+		if (result.first == result.second - 1)
+			continue;
+		else
+			heap.emplace(make_pair(result.first + 1, result.second));
 	}
-	return vector<int>{heap.top().first, heap.top().second};
+	return vector<int>{A[result.first], A[result.second]};
 }
