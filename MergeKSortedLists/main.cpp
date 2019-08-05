@@ -3,6 +3,7 @@
 #include <vector>
 #include <cassert>
 #include <sstream>
+#include <algorithm>
 
 using namespace std;
 
@@ -52,7 +53,10 @@ void addToList(ListNode* &list, ListNode* node) {
 	p->next = node;
 	node->next = nullptr;
 }
-
+/*
+ * version 1:
+ *      每次寻找最小值然后加入新列表中,
+ *      时间复杂度较高但节省空间.
 ListNode* mergeKLists(vector<ListNode*>& lists) {
 	ListNode* ret = nullptr;
 
@@ -79,4 +83,34 @@ ListNode* mergeKLists(vector<ListNode*>& lists) {
 	}
 
 	return ret;
+}
+*/
+/*
+ * version 2:
+ *      读取所有元素排序后输出,
+ *      时间复杂度较低，占用空间多
+ */
+ListNode* mergeKLists(vector<ListNode*>& lists) {
+	ListNode* ret = nullptr;
+	if (lists.empty())
+		return ret;
+
+	vector<int> elements;
+	for (ListNode* list : lists) {
+		ListNode* p = list;
+		while (p != nullptr) {
+			elements.emplace_back(p->val);
+			p = p->next;
+		}
+	}
+	sort(elements.begin(), elements.end());
+
+	auto head = new ListNode(0);   // dummy node
+	ListNode* tail = head;
+
+	for (int ele : elements) {
+		tail->next = new ListNode(ele);
+		tail = tail->next;
+	}
+	return head->next;
 }
