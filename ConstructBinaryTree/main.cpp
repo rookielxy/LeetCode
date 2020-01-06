@@ -15,6 +15,7 @@ struct TreeNode {
 
 void parseInput(vector<int>& pre, vector<int>& post);
 TreeNode* constructFromPrePost(vector<int>& pre, vector<int>& post);
+TreeNode* recursiveHelper(vector<int>& pre, vector<int>& post, int, int, int, int);
 void printTree(TreeNode* root);
 
 int main() {
@@ -31,37 +32,37 @@ int main() {
  * we prefer to put nodes in left subtree if possible
  */
 TreeNode* constructFromPrePost(vector<int>& pre, vector<int>& post) {
-	assert(pre.size() == post.size());
-	if (pre.empty())
+	return recursiveHelper(pre, post, 0, pre.size(), 0, post.size());
+}
+
+TreeNode* recursiveHelper(vector<int>& pre, vector<int>& post, int preS, int preE, 
+							int postS, int postE) {
+	assert(preE - preS == postE - postS and preE >= preS);
+	if (preE == preS)
 		return nullptr;
-
-
-	auto *root = new TreeNode(pre.front());
-	if (pre.size() == 1)
+	auto *root = new TreeNode(pre[preS]);
+	if (preE - preS == 1)
 		return root;
 
-	int leftRootVal = pre[1], leftRootIdx = 0;
-	for (int i = 0; i < post.size(); ++i) {
+	int leftRootVal = pre[preS + 1], leftRootIdx = -1;
+	for (int i = postS; i < postE; ++i) {
 		if (post[i] == leftRootVal) {
 			leftRootIdx = i;
 			break;
 		}
 	}
-
-	int leftLength = leftRootIdx + 1;
-	vector<int> leftPre(pre.begin() + 1, pre.begin() + 1 + leftLength),
-				rightPre(pre.begin() + 1 + leftLength, pre.end());
-	vector<int> leftPost(post.begin(), post.begin() + leftLength),
-				rightPost(post.begin() + leftLength, --post.end());
-	root->left = constructFromPrePost(leftPre, leftPost);
-	root->right = constructFromPrePost(rightPre, rightPost);
+	int leftLen = leftRootIdx - postS + 1;
+	root->left = recursiveHelper(pre, post, preS + 1, preS + 1 + leftLen,
+			postS, postS + leftLen);
+	root->right = recursiveHelper(pre, post, preS + 1 + leftLen, preE,
+			postS + leftLen, postE - 1);
 	return root;
 }
 
 void parseInput(vector<int>& pre, vector<int>& post) {
 	stringstream ss;
 	string str;
-	int ele;
+	int ele = 0;
 	getline(cin, str);
 	ss << str;
 	while (ss >> ele)

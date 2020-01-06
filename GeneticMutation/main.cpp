@@ -4,6 +4,7 @@
 #include <sstream>
 #include <set>
 #include <queue>
+#include <cassert>
 
 using namespace std;
 
