@@ -8,8 +8,7 @@
 using namespace std;
 
 vector<vector<int>> fourSum(vector<int>& nums, int target);
-void dfs(vector<int>& nums, int idx, int target);
-void twoSumHelper(vector<int>& nums, int start, int target);
+void twoSumHelper(const vector<int>& nums, const vector<int>& cand, int start, int target);
 vector<vector<int>> deduplicate(vector<vector<int>>& ret);
 
 int main() {
@@ -35,26 +34,18 @@ int main() {
 }
 
 vector<vector<int>> ans;
-vector<int> cand;
 vector<vector<int>> fourSum(vector<int>& nums, int target) {
 	sort(nums.begin(), nums.end());
-	dfs(nums, 0, target);
+	for (int i = 0; i < nums.size(); ++i) {
+		for (int j = i + 1; j < nums.size(); ++j) {
+			vector<int> cand = {nums[i], nums[j]};
+			twoSumHelper(nums, cand, j + 1, target - nums[i] - nums[j]);
+		}
+	}
 	return deduplicate(ans);
 }
 
-void dfs(vector<int>& nums, int idx, int target) {
-	if (idx == nums.size())
-		return;
-	assert(idx >= 0 and idx < nums.size());
-	cand.emplace_back(nums[idx]);
-	if (cand.size() == 2)
-		twoSumHelper(nums, idx + 1, target - nums[idx]);
-	dfs(nums, idx + 1, target - nums[idx]);
-	cand.pop_back();
-	dfs(nums, idx + 1, target);
-}
-
-void twoSumHelper(vector<int>& nums, int start, int target) {
+void twoSumHelper(const vector<int>& nums, const vector<int>& cand, int start, int target) {
 	int p = start, q = (int)nums.size() - 1;
 	while (p < q) {
 		if (nums[p] + nums[q] < target)
