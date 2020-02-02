@@ -36,13 +36,28 @@ int main() {
 vector<vector<int>> ans;
 vector<vector<int>> fourSum(vector<int>& nums, int target) {
 	sort(nums.begin(), nums.end());
-	for (int i = 0; i < nums.size(); ++i) {
-		for (int j = i + 1; j < nums.size(); ++j) {
+	int n = nums.size();
+	for (int i = 0; i < n - 3; ++i) {
+		if (target < 0 and nums[i] >= 0)
+			break;
+		if (nums[i] + nums[i + 1] + nums[i + 2] + nums[i + 3] > target)
+			break;
+		if (nums[i] + nums[n - 3] + nums[n - 2] + nums[n - 1] < target)
+			continue;
+		if (i > 0 and nums[i] == nums[i - 1])
+			continue;
+		for (int j = i + 1; j < n - 2; ++j) {
+			if (nums[i] + nums[j] + nums[j + 1] + nums[j + 2] > target)
+				break;
+			if (nums[i] + nums[j] + nums[n - 2] + nums[n - 1] < target)
+				continue;
+			if (j > i + 1 and nums[j] == nums[j - 1])
+				continue;
 			vector<int> cand = {nums[i], nums[j]};
 			twoSumHelper(nums, cand, j + 1, target - nums[i] - nums[j]);
 		}
 	}
-	return deduplicate(ans);
+	return ans;
 }
 
 void twoSumHelper(const vector<int>& nums, const vector<int>& cand, int start, int target) {
@@ -57,10 +72,11 @@ void twoSumHelper(const vector<int>& nums, const vector<int>& cand, int start, i
 			temp.emplace_back(nums[p]);
 			temp.emplace_back(nums[q]);
 			ans.emplace_back(temp);
-			if (nums[q] == nums[q - 1])
-				--q;
-			else
+			int oldP = p, oldQ = q;
+			while (p < q and nums[p] == nums[oldP])
 				++p;
+			while (p < q and nums[q] == nums[oldQ])
+				--q;
 		}
 	}
 }
