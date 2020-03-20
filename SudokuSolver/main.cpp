@@ -27,9 +27,9 @@ int main() {
             cin >> board[i][j];
     }
     solveSudoku(board);
-    for(auto row: board) {
-        for(auto col: row)
-            cout << col << " ";
+    for(const auto& r: board) {
+        for(auto c: r)
+            cout << c << " ";
         cout << endl;
     }
     return 0;
