@@ -16,6 +16,8 @@ int main() {
 }
 
 void input(vector<int>& coins, int& amount) {
+//	coins = vector<int>{1, 2, 5};
+//	amount = 11;
 //	coins = vector<int>{186, 419,  83, 408};
 //	amount = 6249;
 	coins = vector<int>{71, 440, 63, 321, 461,
@@ -23,7 +25,7 @@ void input(vector<int>& coins, int& amount) {
 	amount = 9298;
 }
 
-
+/*
 int recursor(const vector<int>& coins, int amount, vector<int>& mem, vector<bool>& visited) {
 	if (amount == 0)
 		return 0;
@@ -46,10 +48,19 @@ int recursor(const vector<int>& coins, int amount, vector<int>& mem, vector<bool
 	mem[amount] = minCoins;
 	return minCoins;
 }
+*/
 
 int coinChange(vector<int>& coins, int amount) {
-	sort(coins.begin(), coins.end(), [](int e1, int e2) { return e1 > e2; });
-	vector<int> mem(amount + 1, 0);
-	vector<bool> visited(amount + 1, false);
-	return recursor(coins, amount, mem, visited);
+	vector<int> mem(amount + 1, -1);
+	mem[0] = 0;
+	for (int i = 1; i <= amount; ++i) {
+		int minCoins = 0x3f3f3f3f;
+		for (int ele : coins) {
+			if (i - ele >= 0 and mem[i - ele] != -1)
+				minCoins = min(minCoins, mem[i - ele] + 1);
+		}
+		if (minCoins != 0x3f3f3f3f)
+			mem[i] = minCoins;
+	}
+	return mem[amount];
 }
