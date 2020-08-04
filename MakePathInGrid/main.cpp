@@ -50,7 +50,6 @@ struct Node {
     int dist;
 
     Node(int x, int y, int dist): x(x), y(y), dist(dist) {}
-    bool operator>(const Node& n) const { return dist > n.dist; }
 };
 
 int minCost(vector<vector<int>>& grid) {
@@ -59,19 +58,19 @@ int minCost(vector<vector<int>>& grid) {
 
     vector<vector<bool>> visited(row, vector<bool>(col, false));
 
-    priority_queue<Node, vector<Node>, greater<>> q;
-    q.push(Node(0, 0, 0));
+    deque<Node> q;
+    q.push_front(Node(0, 0, 0));
     visited[0][0] = true;
 
     int minCost = 0x3f3f3f3f;
     while (not q.empty()) {
-        Node top = q.top();
+        Node top = q.front();
         if (top.x == row - 1 and top.y == col - 1) {
             minCost = top.dist;
             break;
         }
         visited[top.x][top.y] = true;
-        q.pop();
+        q.pop_front();
 
         for (int i = 0; i < 4; ++i) {
             int nx = top.x + directions[i][0], ny = top.y + directions[i][1];
@@ -80,8 +79,11 @@ int minCost(vector<vector<int>>& grid) {
             if (visited[nx][ny])
                 continue;
 
-            int dist = top.dist + ((i + 1 == grid[top.x][top.y]) ? 0 : 1);
-            q.push(Node(nx, ny, dist));
+            int delta = (i + 1 == grid[top.x][top.y]) ? 0 : 1;
+            if (delta == 0)
+                q.push_front(Node(nx, ny, top.dist));
+            else
+                q.emplace_back(nx, ny, top.dist + delta);
         }
     }
 
